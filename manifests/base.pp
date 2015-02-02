@@ -84,6 +84,7 @@ define project::base (
         docroot_owner   => $owner,
         docroot_group   => $group,
         logroot         => $log_path,
-        custom_fragment => $custom_fragment
+        custom_fragment => $custom_fragment,
+        override        => ['All']
     }
 }
