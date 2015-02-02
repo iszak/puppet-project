@@ -9,8 +9,8 @@ define project::base (
     $web_path = '',
     $web_host,
 
-    $ssh_private_key,
-    $ssh_public_key,
+    $ssh_key,
+    $ssh_key_path = '',
 
     $custom_fragment = ''
 ) {
@@ -38,30 +38,20 @@ define project::base (
         }
     }
 
-    file { "${title}_ssh_private_key":
+    file { "${title}_ssh_key":
         ensure  => present,
         require => File[$ssh_path],
         path    => "${ssh_path}/${title}.key",
         owner   => $owner,
         group   => $group,
-        content => $ssh_private_key
-    }
-
-    file { "${title}_ssh_public_key":
-        ensure  => present,
-        require => File[$ssh_path],
-        path    => "${ssh_path}/${title}.pub",
-        owner   => $owner,
-        group   => $group,
-        content => $ssh_public_key
+        content => $ssh_key
     }
 
     vcsrepo { $title:
         ensure  => present,
         require => [
             Project::Client[$user],
-            File[ "${title}_ssh_private_key"],
-            File[ "${title}_ssh_public_key"]
+            File[ "${title}_ssh_key"]
         ],
         provider => 'git',
         source   => $repo_source,
@@ -76,8 +66,7 @@ define project::base (
         require         => [
             Vcsrepo[$title],
             Project::Client[$user],
-            File[ "${title}_ssh_private_key"],
-            File[ "${title}_ssh_public_key"]
+            File["${title}_ssh_key"]
         ],
         port            => 80,
         docroot         => "${repo_path}/$web_path",

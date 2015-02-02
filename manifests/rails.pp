@@ -14,8 +14,8 @@ define project::rails (
     $database_username,
     $database_password,
 
-    $ssh_private_key,
-    $ssh_public_key,
+    $ssh_key,
+    $ssh_key_path = '',
 
     $bundle_install = true,
     $bundle_path    = '',
@@ -39,8 +39,9 @@ define project::rails (
         web_path        => $web_path,
         web_host        => $web_host,
 
-        ssh_private_key => $ssh_private_key,
-        ssh_public_key  => $ssh_public_key,
+        ssh_key         => $ssh_key,
+        ssh_key_path    => $ssh_key_path,
+
         custom_fragment => "
     PassengerStartTimeout 300\n
     \n\n

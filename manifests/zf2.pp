@@ -14,8 +14,8 @@ define project::zf2 (
     $database_username,
     $database_password,
 
-    $ssh_private_key,
-    $ssh_public_key,
+    $ssh_key,
+    $ssh_key_path = '',
 
     $composer_install = true,
     $composer_path    = '',
@@ -39,8 +39,9 @@ define project::zf2 (
         web_path        => $web_path,
         web_host        => $web_host,
 
-        ssh_private_key => $ssh_private_key,
-        ssh_public_key  => $ssh_public_key,
+        ssh_key         => $ssh_key,
+        ssh_key_path    => $ssh_key_path,
+
         custom_fragment => $custom_fragment
     }
 

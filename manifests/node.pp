@@ -9,8 +9,8 @@ define project::node (
     $web_path = '',
     $web_host,
 
-    $ssh_private_key,
-    $ssh_public_key,
+    $ssh_key,
+    $ssh_key_path = '',
 
     $npm_install = true,
     $npm_path    = '',
@@ -36,8 +36,8 @@ define project::node (
         web_path        => $web_path,
         web_host        => $web_host,
 
-        ssh_private_key => $ssh_private_key,
-        ssh_public_key  => $ssh_public_key,
+        ssh_key         => $ssh_key,
+        ssh_key_path    => $ssh_key_path,
 
         custom_fragment => "
     PassengerAppEnv ${environment}\n

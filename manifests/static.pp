@@ -9,8 +9,8 @@ define project::static (
     $web_path = '',
     $web_host,
 
-    $ssh_private_key,
-    $ssh_public_key,
+    $ssh_key,
+    $ssh_key_path = '',
 
     $npm_install = false,
     $npm_path    = '',
@@ -22,18 +22,18 @@ define project::static (
     $project_path = "${home_path}/${repo_path}"
 
     project::base { $title:
-        user            => $user,
-        owner           => $owner,
-        group           => $group,
+        user         => $user,
+        owner        => $owner,
+        group        => $group,
 
-        repo_path       => $project_path,
-        repo_source     => $repo_source,
+        repo_path    => $project_path,
+        repo_source  => $repo_source,
 
-        web_path        => $web_path,
-        web_host        => $web_host,
+        web_path     => $web_path,
+        web_host     => $web_host,
 
-        ssh_private_key => $ssh_private_key,
-        ssh_public_key  => $ssh_public_key
+        ssh_key      => $ssh_key,
+        ssh_key_path => $ssh_key_path,
     }
 
 
