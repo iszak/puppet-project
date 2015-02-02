@@ -67,16 +67,41 @@ define project::zf2 (
         }
     }
 
+    exec { "${title}_config":
+        require => [
+            Vcsrepo[crowdwish_backend],
+        ],
+        command     => "/usr/bin/find web/config/ -type f -iname \"*.dist\" -execdir sh -c \"echo {} | sed 's/.dist//g' | xargs -I f cp f.dist f\" \\;",
+        environment => "HOME=${home_path}",
+        user        => $user,
+        group       => $group,
+        cwd         => "${project_path}/"
+    }
+
+
+    exec { "${title}_data":
+        require     => [
+            Vcsrepo[crowdwish_backend],
+        ],
+        command     => "/bin/chmod -R 0777 data/",
+        user        => $user,
+        group       => $group,
+        cwd         => "${project_path}/web/"
+    }
+
+
     # TODO: Conditional
-    # exec { "${title}_doctrine_migration":
-    #     require     => [
-    #         Vcsrepo[crowdwish_backend],
-    #         Exec["${title}_composer_install"]
-    #     ],
-    #     command     => "/usr/bin/php vendor/bin/doctrine-module migrations:migrate --no-interaction",
-    #     environment => "HOME=${home_path}",
-    #     user        => $user,
-    #     group       => $group,
-    #     cwd         => "${project_path}/"
-    # }
+    exec { "${title}_doctrine_migration":
+        require     => [
+            Vcsrepo[crowdwish_backend],
+            Exec["${title}_composer_install"],
+            Exec["${title}_data"],
+            Exec["${title}_config"]
+        ],
+        command     => "/usr/bin/php web/vendor/bin/doctrine-module migrations:migrate --no-interaction",
+        environment => "HOME=${home_path}",
+        user        => $user,
+        group       => $group,
+        cwd         => "${project_path}/"
+    }
 }
