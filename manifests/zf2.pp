@@ -81,13 +81,11 @@ define project::zf2 (
 
 
     exec { "${title}_data":
-        require     => [
+        require => [
             Vcsrepo[crowdwish_backend],
         ],
-        command     => "/bin/chmod -R 0777 data/",
-        user        => $user,
-        group       => $group,
-        cwd         => "${project_path}/web/"
+        command => "/bin/chmod -R 0777 data/",
+        cwd     => "${project_path}/web/"
     }
 
 
