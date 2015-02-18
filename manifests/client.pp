@@ -8,9 +8,6 @@ define project::client (
     $log_path,
     $ssh_path
 ) {
-    warning("Public path is ${public_path}")
-    warning("SSH path is ${ssh_path}")
-
     user { $user:
         ensure     => present,
         managehome => true

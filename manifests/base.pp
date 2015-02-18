@@ -23,8 +23,6 @@ define project::base (
     $log_path     = "${home_path}/log"
     $project_path = "${home_path}/${repo_path}"
 
-    warning("User is ${user}")
-
     if (defined(Project::Client[$user]) == false) {
         project::client { $user:
             user        => $user,
