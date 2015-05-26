@@ -51,13 +51,19 @@ define project::rails (
     }
 
     if ($bundle_install == true) {
+        if ($environment == 'production') {
+            $option = '--deployment'
+        } else {
+            $option = '--path=vendor/bundle'
+        }
+
         ruby::bundle { $title:
             require => [
                 Class[ruby::dev],
                 Vcsrepo[$title]
             ],
             command => 'install',
-            option  => '--path=vendor/bundle',
+            option  => $option,
             cwd     => "${project_path}/${bundle_path}",
             user    => $user,
             group   => $group,
@@ -72,16 +78,25 @@ define project::rails (
         }
     }
 
-    # TODO: Conditional migrate
-    ruby::rake { $title:
-        require   => [
+    if ($bundle_install == true) {
+        $rake_require = [
             Vcsrepo[$title],
             Ruby::Bundle[$title],
             Postgresql::Server::Db[$database_name]
-        ],
+        ]
+    } else {
+        $rake_require = [
+            Vcsrepo[$title],
+            Postgresql::Server::Db[$database_name]
+        ]
+    }
+
+    # TODO: Conditional migrate
+    ruby::rake { $title:
+        require   => $rake_require,
         task      => 'db:migrate',
         rails_env => $environment,
-        bundle    => true,
+        bundle    => $bundle_install,
         user      => $user,
         group     => $group,
         cwd       => $project_path
