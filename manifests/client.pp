@@ -13,6 +13,14 @@ define project::client (
         managehome => true
     }
 
+    file { $home_path:
+        ensure  => directory,
+        require => User[$user],
+        path    => $home_path,
+        owner   => $owner,
+        group   => $group
+    }
+
     file { $public_path:
         ensure  => directory,
         require => User[$user],
