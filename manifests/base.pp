@@ -3,6 +3,7 @@ define project::base (
     $owner,
     $group,
 
+    $repo_ensure = 'present',
     $repo_path,
     $repo_source,
 
@@ -46,7 +47,7 @@ define project::base (
     }
 
     vcsrepo { $title:
-        ensure  => present,
+        ensure  => $repo_ensure,
         require => [
             Project::Client[$user],
             File[ "${title}_ssh_key"]
@@ -64,6 +65,7 @@ define project::base (
         require         => [
             Vcsrepo[$title],
             Project::Client[$user],
+            User[$user],
             File["${title}_ssh_key"]
         ],
         port            => 80,
