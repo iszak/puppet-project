@@ -5,7 +5,7 @@ define project::ruby::capistrano (
 ) {
     $home_path    = "/home/${user}"
 
-    $timestamp    = generate('/bin/date', '+%s')
+    $timestamp    = regsubst(generate('/bin/date', '+%s'), '\n', '')
     $current_path = "${home_path}/current"
     $release_path = "${home_path}/releases"
     $repo_path    = "${home_path}/repo"
