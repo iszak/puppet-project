@@ -21,12 +21,22 @@ define project::rails (
     $bundle_path    = '',
     $bundle_timeout = 300,
 
+    $capistrano = true,
+
     $environment = 'production',
 
     $custom_fragment = ''
 ) {
     $home_path    = "/home/${user}"
     $project_path = "${home_path}/${repo_path}"
+
+    if ($capistrano == true) {
+        project::ruby::capistrano { $title:
+            user            => $user,
+            owner           => $owner,
+            group           => $group,
+        }
+    }
 
     project::base { $title:
         user            => $user,
