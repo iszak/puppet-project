@@ -29,13 +29,13 @@ define project::client (
         group   => $group
     }
 
-    # file { $log_path:
-    #     ensure  => directory,
-    #     require => User[$user],
-    #     path    => $log_path,
-    #     owner   => $owner,
-    #     group   => $group
-    # }
+    file { $log_path:
+        ensure  => directory,
+        require => User[$user],
+        path    => $log_path,
+        owner   => $owner,
+        group   => $group
+    }
 
 
     file { $ssh_path:
