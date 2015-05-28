@@ -21,14 +21,13 @@ define project::rails (
     $bundle_path    = '',
     $bundle_timeout = 300,
 
-    $capistrano = true,
+    $capistrano = false,
 
     $environment = 'production',
 
     $custom_fragment = ''
 ) {
     $home_path    = "/home/${user}"
-    $project_path = "${home_path}/${repo_path}"
 
     if ($capistrano == true) {
         project::ruby::capistrano { $title:
@@ -36,6 +35,9 @@ define project::rails (
             owner           => $owner,
             group           => $group,
         }
+        $project_path = "${home_path}/current"
+    } else {
+        $project_path = "${home_path}/${repo_path}"
     }
 
     project::base { $title:
