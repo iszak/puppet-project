@@ -13,15 +13,16 @@ define project::base (
     $ssh_key,
     $ssh_key_path = '',
 
+    $skeleton = 'default',
+
     $custom_fragment = ''
 ) {
     include git
     include apache
 
     $home_path    = "/home/${user}"
+    $log_path     = "${home_path}/logs"
     $ssh_path     = "${home_path}/.ssh"
-    $public_path  = "${home_path}/public"
-    $log_path     = "${home_path}/log"
     $project_path = "${home_path}/${repo_path}"
 
     if (defined(Project::Client[$user]) == false) {
@@ -30,9 +31,9 @@ define project::base (
             owner       => $owner,
             group       => $group,
 
+            skeleton    => $skeleton,
+
             home_path   => $home_path,
-            public_path => $public_path,
-            log_path    => $log_path,
             ssh_path    => $ssh_path
         }
     }

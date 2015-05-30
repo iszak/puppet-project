@@ -3,11 +3,23 @@ define project::client (
     $owner,
     $group,
 
+    $skeleton,
+
     $home_path,
-    $public_path,
-    $log_path,
     $ssh_path
 ) {
+    create_resources(
+        "project::skeleton::${skeleton}",
+        {
+            user => {
+            require => User[$user],
+            user    => $user,
+            owner   => $owner,
+            group   => $group,
+            }
+        }
+    )
+
     user { $user:
         ensure     => present,
         managehome => true
@@ -20,23 +32,6 @@ define project::client (
         owner   => $owner,
         group   => $group
     }
-
-    file { $public_path:
-        ensure  => directory,
-        require => User[$user],
-        path    => $public_path,
-        owner   => $owner,
-        group   => $group
-    }
-
-    file { $log_path:
-        ensure  => directory,
-        require => User[$user],
-        path    => $log_path,
-        owner   => $owner,
-        group   => $group
-    }
-
 
     file { $ssh_path:
         ensure  => directory,

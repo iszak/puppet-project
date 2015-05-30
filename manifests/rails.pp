@@ -30,13 +30,10 @@ define project::rails (
     $home_path    = "/home/${user}"
 
     if ($capistrano == true) {
-        project::ruby::capistrano { $title:
-            user            => $user,
-            owner           => $owner,
-            group           => $group,
-        }
+        $skeleton     = "capistrano"
         $project_path = "${home_path}/current"
     } else {
+        $skeleton     = "default"
         $project_path = "${home_path}/${repo_path}"
     }
 
@@ -53,6 +50,8 @@ define project::rails (
 
         ssh_key         => $ssh_key,
         ssh_key_path    => $ssh_key_path,
+
+        skeleton        => $skeleton,
 
         custom_fragment => "
     PassengerStartTimeout 300\n
