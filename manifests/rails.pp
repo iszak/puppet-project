@@ -15,11 +15,16 @@ define project::rails (
     $database_password,
 
     $ssh_key,
-    $ssh_key_path = '',
+    $ssh_key_path = undef,
 
-    $bundle_install = true,
+    $ssh_config = '',
+    $ssh_known_hosts = [],
+
+    $bundle_install = false,
     $bundle_path    = '',
     $bundle_timeout = 300,
+
+    $migrate = false,
 
     $capistrano = false,
 
@@ -50,6 +55,9 @@ define project::rails (
 
         ssh_key         => $ssh_key,
         ssh_key_path    => $ssh_key_path,
+
+        ssh_config      => $ssh_config,
+        ssh_known_hosts => $ssh_known_hosts,
 
         skeleton        => $skeleton,
 
@@ -102,14 +110,16 @@ define project::rails (
         ]
     }
 
-    # TODO: Conditional migrate
-    ruby::rake { $title:
-        require   => $rake_require,
-        task      => 'db:migrate',
-        rails_env => $environment,
-        bundle    => $bundle_install,
-        user      => $user,
-        group     => $group,
-        cwd       => $project_path
+    if ($migrate == true) {
+        # TODO: Conditional migrate
+        ruby::rake { $title:
+            require   => $rake_require,
+            task      => 'db:migrate',
+            rails_env => $environment,
+            bundle    => $bundle_install,
+            user      => $user,
+            group     => $group,
+            cwd       => $project_path
+        }
     }
 }

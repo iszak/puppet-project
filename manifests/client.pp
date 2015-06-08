@@ -12,10 +12,13 @@ define project::client (
         "project::skeleton::${skeleton}",
         {
             user => {
-            require => User[$user],
-            user    => $user,
-            owner   => $owner,
-            group   => $group,
+                require => [
+                    User[$user],
+                    File[$home_path],
+                ],
+                user    => $user,
+                owner   => $owner,
+                group   => $group,
             }
         }
     )

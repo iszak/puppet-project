@@ -10,7 +10,9 @@ define project::node (
     $web_host,
 
     $ssh_key,
-    $ssh_key_path = '',
+    $ssh_key_path = undef,
+
+    $ssh_known_hosts = [],
 
     $npm_install = true,
     $npm_path    = '',
@@ -38,6 +40,8 @@ define project::node (
 
         ssh_key         => $ssh_key,
         ssh_key_path    => $ssh_key_path,
+
+        ssh_known_hosts => $ssh_known_hosts,
 
         custom_fragment => "
     PassengerAppEnv ${environment}\n

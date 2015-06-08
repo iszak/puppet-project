@@ -11,7 +11,10 @@ define project::base (
     $web_host,
 
     $ssh_key,
-    $ssh_key_path = '',
+    $ssh_key_path = undef,
+
+    $ssh_known_hosts = [],
+    $ssh_config      = '',
 
     $skeleton = 'default',
 
@@ -24,6 +27,12 @@ define project::base (
     $log_path     = "${home_path}/logs"
     $ssh_path     = "${home_path}/.ssh"
     $project_path = "${home_path}/${repo_path}"
+
+    if ($ssh_key_path == undef) {
+        $real_ssh_key_path = "/home/${user}/.ssh/${title}.key"
+    } else {
+        $real_ssh_key_path = $ssh_key_path
+    }
 
     if (defined(Project::Client[$user]) == false) {
         project::client { $user:
@@ -38,12 +47,33 @@ define project::base (
         }
     }
 
-    file { "${title}_ssh_key":
+    file { "${title}_config":
         ensure  => present,
         require => File[$ssh_path],
-        path    => "${ssh_path}/${title}.key",
+        path    => "${ssh_path}/config",
         owner   => $owner,
         group   => $group,
+        mode    => '0600',
+        content => $ssh_config
+    }
+
+    file { "${title}_known_hosts":
+        ensure  => present,
+        require => File[$ssh_path],
+        path    => "${ssh_path}/known_hosts",
+        owner   => $owner,
+        group   => $group,
+        mode    => '0600',
+        content => join($ssh_known_hosts, "\n")
+    }
+
+     file { "${title}_ssh_key":
+        ensure  => present,
+        require => File[$ssh_path],
+        path    => $real_ssh_key_path,
+        owner   => $owner,
+        group   => $group,
+        mode    => '0600',
         content => $ssh_key
     }
 
@@ -51,7 +81,9 @@ define project::base (
         ensure  => $repo_ensure,
         require => [
             Project::Client[$user],
-            File[ "${title}_ssh_key"]
+            File["${title}_ssh_key"],
+            File["${title}_config"],
+            File["${title}_known_hosts"],
         ],
         provider => 'git',
         source   => $repo_source,
@@ -59,7 +91,7 @@ define project::base (
         user     => $user,
         owner    => $owner,
         group    => $group,
-        identity => "${ssh_path}/${title}.key"
+        identity => $ssh_key_path
     }
 
     apache::vhost { $web_host:

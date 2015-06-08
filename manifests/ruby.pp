@@ -10,7 +10,9 @@ define project::ruby (
     $web_host,
 
     $ssh_key,
-    $ssh_key_path = '',
+    $ssh_key_path = undef,
+
+    $ssh_known_hosts = [],
 
     $bundle_install = true,
     $bundle_path    = '',
@@ -36,6 +38,8 @@ define project::ruby (
 
         ssh_key         => $ssh_key,
         ssh_key_path    => $ssh_key_path,
+
+        ssh_known_hosts => $ssh_known_hosts,
 
         custom_fragment => "
     RackEnv ${environment}\n
