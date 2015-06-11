@@ -1,7 +1,7 @@
 define project::skeleton::default (
     $owner,
-    $group
-    $user
+    $group,
+    $user,
 ) {
     $public_path  = "${home_path}/public"
 

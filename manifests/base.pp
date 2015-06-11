@@ -40,12 +40,26 @@ define project::base (
             owner       => $owner,
             group       => $group,
 
-            skeleton    => $skeleton,
-
             home_path   => $home_path,
             ssh_path    => $ssh_path
         }
     }
+
+    create_resources(
+        "project::skeleton::${skeleton}",
+        {
+            "${title}" => {
+                require => [
+                    Project::Client[$user],
+                ],
+                user    => $user,
+                owner   => $owner,
+                group   => $group,
+                project => $title,
+            }
+        }
+    )
+
 
     file { "${title}_config":
         ensure  => present,

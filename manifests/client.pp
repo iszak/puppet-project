@@ -3,26 +3,9 @@ define project::client (
     $owner,
     $group,
 
-    $skeleton,
-
     $home_path,
     $ssh_path
 ) {
-    create_resources(
-        "project::skeleton::${skeleton}",
-        {
-            user => {
-                require => [
-                    User[$user],
-                    File[$home_path],
-                ],
-                user    => $user,
-                owner   => $owner,
-                group   => $group,
-            }
-        }
-    )
-
     user { $user:
         ensure     => present,
         managehome => true
