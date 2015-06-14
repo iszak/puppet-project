@@ -36,9 +36,7 @@ define project::skeleton::capistrano (
     }
 
     # Current path
-    exec { [
-        "/bin/ln --symbolic --force ${current_release_path} ${current_path}",
-    ]:
+    exec { "/bin/ln --symbolic --force ${current_release_path} ${current_path}":
         require => [
             Exec["/bin/mkdir ${current_release_path}"],
         ],
@@ -57,12 +55,13 @@ define project::skeleton::capistrano (
         "${current_release_path}/tmp/cache",
         "${current_release_path}/tmp/sockets",
         "${current_release_path}/tmp",
-        "${current_release_path}/vendor/bundle",
-        "${current_release_path}/vendor",
         "${current_release_path}/public/system",
+        "${current_release_path}/vendor",
     ]:
         ensure  => absent,
-        require => Vcsrepo[$title],
+        require => [
+            Vcsrepo[$title],
+        ],
         force   => true,
     }
 
@@ -71,29 +70,34 @@ define project::skeleton::capistrano (
         "${shared_path}/bin",
         "${shared_path}/log",
         "${shared_path}/tmp",
-        "${shared_path}/vendor",
         "${shared_path}/public",
+        "${shared_path}/vendor",
     ]:
         ensure => directory,
+        force   => true,
+        owner  => $owner,
+        group  => $group,
     }
- 
+
 
      file { [
         "${shared_path}/tmp/pids",
         "${shared_path}/tmp/cache",
         "${shared_path}/tmp/sockets",
-        "${shared_path}/vendor/bundle",
         "${shared_path}/public/system",
+        "${shared_path}/vendor/bundle",
     ]:
         ensure    => directory,
         require   => [
             File["${shared_path}/bin"],
             File["${shared_path}/log"],
             File["${shared_path}/tmp"],
-            File["${shared_path}/vendor"],
             File["${shared_path}/public"],
+            File["${shared_path}/vendor"],
         ],
-    }
+        owner     => $owner,
+        group     => $group,
+     }
 
 
     exec { [
@@ -109,15 +113,16 @@ define project::skeleton::capistrano (
             File["${current_release_path}/tmp/cache"],
             File["${current_release_path}/tmp/sockets"],
             File["${current_release_path}/tmp"],
-            File["${current_release_path}/vendor/bundle"],
             File["${current_release_path}/vendor"],
             File["${current_release_path}/public/system"],
             File["${shared_path}/bin"],
             File["${shared_path}/log"],
             File["${shared_path}/tmp"],
             File["${shared_path}/vendor"],
+            File["${shared_path}/vendor/bundle"],
         ],
         user      => $user,
         group     => $group,
+        unless    => "/usr/bin/test -L ${current_path}/bin",
     }
 }

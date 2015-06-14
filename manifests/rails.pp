@@ -20,9 +20,9 @@ define project::rails (
     $ssh_config = '',
     $ssh_known_hosts = [],
 
-    $bundle_install = false,
+    $bundle_install = true,
     $bundle_path    = '',
-    $bundle_timeout = 300,
+    $bundle_timeout = 600,
 
     $migrate = false,
 
@@ -79,7 +79,7 @@ define project::rails (
         ruby::bundle { $title:
             require => [
                 Class[ruby::dev],
-                Vcsrepo[$title]
+                Project::Base[$title]
             ],
             command => 'install',
             option  => $option,
