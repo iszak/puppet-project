@@ -74,13 +74,13 @@ define project::skeleton::capistrano (
         "${shared_path}/vendor",
     ]:
         ensure => directory,
-        force   => true,
+        force  => true,
         owner  => $owner,
         group  => $group,
     }
 
 
-     file { [
+    file { [
         "${shared_path}/tmp/pids",
         "${shared_path}/tmp/cache",
         "${shared_path}/tmp/sockets",
@@ -99,30 +99,58 @@ define project::skeleton::capistrano (
         group     => $group,
      }
 
-
     exec { [
         "/bin/ln --symbolic --force ${shared_path}/bin ${current_release_path}/bin",
-        "/bin/ln --symbolic --force ${shared_path}/log ${current_release_path}/log",
-        "/bin/ln --symbolic --force ${shared_path}/tmp ${current_release_path}/tmp",
-        "/bin/ln --symbolic --force ${shared_path}/vendor ${current_release_path}/vendor",
     ]:
         require => [
             File["${current_release_path}/bin"],
+            File["${shared_path}/log"],
+        ],
+        user      => $user,
+        group     => $group,
+        unless    => "/usr/bin/test -L ${current_path}/bin",
+    }
+
+
+
+    exec { [
+        "/bin/ln --symbolic --force ${shared_path}/log ${current_release_path}/log",
+    ]:
+        require => [
             File["${current_release_path}/log"],
+            File["${shared_path}/log"],
+        ],
+        user      => $user,
+        group     => $group,
+        unless    => "/usr/bin/test -L ${current_path}/log",
+    }
+
+
+    exec { [
+        "/bin/ln --symbolic --force ${shared_path}/tmp ${current_release_path}/tmp",
+    ]:
+        require => [
             File["${current_release_path}/tmp/pids"],
             File["${current_release_path}/tmp/cache"],
             File["${current_release_path}/tmp/sockets"],
             File["${current_release_path}/tmp"],
-            File["${current_release_path}/vendor"],
-            File["${current_release_path}/public/system"],
-            File["${shared_path}/bin"],
-            File["${shared_path}/log"],
             File["${shared_path}/tmp"],
+        ],
+        user      => $user,
+        group     => $group,
+        unless    => "/usr/bin/test -L ${current_path}/tmp",
+    }
+
+    exec { [
+        "/bin/ln --symbolic --force ${shared_path}/vendor ${current_release_path}/vendor",
+    ]:
+        require => [
+            File["${current_release_path}/vendor"],
             File["${shared_path}/vendor"],
             File["${shared_path}/vendor/bundle"],
         ],
         user      => $user,
         group     => $group,
-        unless    => "/usr/bin/test -L ${current_path}/bin",
+        unless    => "/usr/bin/test -L ${current_path}/vendor",
     }
 }

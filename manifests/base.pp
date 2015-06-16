@@ -108,6 +108,11 @@ define project::base (
         identity => $ssh_key_path
     }
 
+    # TODO: Remove hack
+    exec { "/bin/chown -R ${owner}:${group} /home/uploadir/current/":
+        require => Vcsrepo[$title],
+    }
+
     apache::vhost { $web_host:
         require         => [
             Vcsrepo[$title],
