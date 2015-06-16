@@ -17,6 +17,7 @@ define project::zf2 (
     $ssh_key,
     $ssh_key_path = undef,
 
+    $ssh_config = '',
     $ssh_known_hosts = [],
 
     $composer_install = true,
@@ -44,6 +45,7 @@ define project::zf2 (
         ssh_key         => $ssh_key,
         ssh_key_path    => $ssh_key_path,
 
+        ssh_config => $ssh_config,
         ssh_known_hosts => $ssh_known_hosts,
 
         custom_fragment => $custom_fragment

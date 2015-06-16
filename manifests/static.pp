@@ -12,6 +12,7 @@ define project::static (
     $ssh_key,
     $ssh_key_path = undef,
 
+    $ssh_config = '',
     $ssh_known_hosts = [],
 
     $npm_install = false,
@@ -38,6 +39,7 @@ define project::static (
         ssh_key_path => $ssh_key_path,
 
         ssh_known_hosts => $ssh_known_hosts,
+        ssh_config => $ssh_config,
     }
 
 
