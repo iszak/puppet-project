@@ -109,7 +109,7 @@ define project::base (
     }
 
     # TODO: Remove hack
-    exec { "/bin/chown -R ${owner}:${group} /home/uploadir/current/":
+    exec { "/bin/chown -R ${owner}:${group} ${repo_path}":
         require => Vcsrepo[$title],
     }
 
