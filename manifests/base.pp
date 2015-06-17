@@ -14,7 +14,7 @@ define project::base (
     $ssh_key_path = undef,
 
     $ssh_known_hosts = [],
-    $ssh_config      = '',
+    $ssh_config      = undef,
 
     $skeleton = 'default',
 
@@ -61,34 +61,38 @@ define project::base (
     )
 
 
-    file { "${title}_config":
-        ensure  => present,
-        require => File[$ssh_path],
-        path    => "${ssh_path}/config",
-        owner   => $owner,
-        group   => $group,
-        mode    => '0600',
-        content => $ssh_config
+    if ($ssh_config != undef) {
+        file { "${user}_config":
+            ensure  => present,
+            require => File[$ssh_path],
+            path    => "${ssh_path}/config",
+            owner   => $owner,
+            group   => $group,
+            mode    => '0600',
+            content => $ssh_config
+        }
     }
 
-    file { "${title}_known_hosts":
-        ensure  => present,
-        require => File[$ssh_path],
-        path    => "${ssh_path}/known_hosts",
-        owner   => $owner,
-        group   => $group,
-        mode    => '0600',
-        content => join($ssh_known_hosts, "\n")
+    if ($ssh_known_hosts != []) {
+        file { "${user}_known_hosts":
+            ensure  => present,
+            require => File[$ssh_path],
+            path    => "${ssh_path}/known_hosts",
+            owner   => $owner,
+            group   => $group,
+            mode    => '0600',
+            content => join($ssh_known_hosts, "\n")
+        }
     }
 
-     file { "${title}_ssh_key":
-        ensure  => present,
-        require => File[$ssh_path],
-        path    => $real_ssh_key_path,
-        owner   => $owner,
-        group   => $group,
-        mode    => '0600',
-        content => $ssh_key
+    file { "${title}_ssh_key":
+       ensure  => present,
+       require => File[$ssh_path],
+       path    => $real_ssh_key_path,
+       owner   => $owner,
+       group   => $group,
+       mode    => '0600',
+       content => $ssh_key
     }
 
     vcsrepo { $title:
@@ -96,8 +100,8 @@ define project::base (
         require => [
             Project::Client[$user],
             File["${title}_ssh_key"],
-            File["${title}_config"],
-            File["${title}_known_hosts"],
+            File["${user}_config"],
+            File["${user}_known_hosts"],
         ],
         provider => 'git',
         source   => $repo_source,

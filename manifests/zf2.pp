@@ -17,7 +17,7 @@ define project::zf2 (
     $ssh_key,
     $ssh_key_path = undef,
 
-    $ssh_config = '',
+    $ssh_config = undef,
     $ssh_known_hosts = [],
 
     $composer_install = true,

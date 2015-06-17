@@ -17,7 +17,7 @@ define project::rails (
     $ssh_key,
     $ssh_key_path = undef,
 
-    $ssh_config = '',
+    $ssh_config = undef,
     $ssh_known_hosts = [],
 
     $bundle_install = true,
