@@ -24,7 +24,7 @@ define project::rails (
     $bundle_path    = '',
     $bundle_timeout = 600,
 
-    $migrate = false,
+    $migrate = true,
 
     $capistrano = false,
 
@@ -43,25 +43,26 @@ define project::rails (
     }
 
     project::base { $title:
-        user            => $user,
-        owner           => $owner,
-        group           => $group,
+        user              => $user,
+        owner             => $owner,
+        group             => $group,
 
-        repo_path       => $project_path,
-        repo_source     => $repo_source,
+        repo_path         => $project_path,
+        repo_source       => $repo_source,
 
-        web_path        => $web_path,
-        web_host        => $web_host,
+        web_path          => $web_path,
+        web_host          => $web_host,
 
-        ssh_key         => $ssh_key,
-        ssh_key_path    => $ssh_key_path,
+        ssh_key           => $ssh_key,
+        ssh_key_path      => $ssh_key_path,
 
-        ssh_config      => $ssh_config,
-        ssh_known_hosts => $ssh_known_hosts,
+        ssh_config        => $ssh_config,
+        ssh_known_hosts   => $ssh_known_hosts,
 
-        skeleton        => $skeleton,
+        skeleton          => $skeleton,
 
-        custom_fragment => "
+        passenger_app_env => $environment,
+        custom_fragment   => "
     PassengerStartTimeout 300\n
     \n\n
     RackEnv ${environment}\n
