@@ -70,6 +70,33 @@ define project::rails (
     }
 
     if ($bundle_install == true) {
+        $rake_require = [
+            Vcsrepo[$title],
+            Ruby::Bundle[$title],
+            Postgresql::Server::Db[$database_name],
+        ]
+
+        if ($database_type == 'postgresql') {
+            $bundle_require = [
+                Class[ruby::dev],
+                Project::Base[$title],
+            ]
+        } else {
+            $bundle_require = [
+                Class[ruby::dev],
+                Project::Base[$title],
+                Class[postgresql::lib::devel],
+                Package['postgresql-dev-9.3'],
+            ]
+        }
+    } else {
+        $rake_require = [
+            Vcsrepo[$title],
+            Postgresql::Server::Db[$database_name],
+        ]
+    }
+
+    if ($bundle_install == true) {
         if ($environment == 'production') {
             $option = '--deployment'
         } else {
@@ -77,10 +104,7 @@ define project::rails (
         }
 
         ruby::bundle { $title:
-            require => [
-                Class[ruby::dev],
-                Project::Base[$title]
-            ],
+            require => $bundle_require,
             command => 'install',
             option  => $option,
             cwd     => "${project_path}/${bundle_path}",
@@ -95,19 +119,6 @@ define project::rails (
             user     => $database_username,
             password => $database_password
         }
-    }
-
-    if ($bundle_install == true) {
-        $rake_require = [
-            Vcsrepo[$title],
-            Ruby::Bundle[$title],
-            Postgresql::Server::Db[$database_name]
-        ]
-    } else {
-        $rake_require = [
-            Vcsrepo[$title],
-            Postgresql::Server::Db[$database_name]
-        ]
     }
 
     if ($migrate == true) {
