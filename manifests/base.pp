@@ -114,18 +114,19 @@ define project::base (
 
 
     apache::vhost { $web_host:
-        require         => [
+        require           => [
             Vcsrepo[$title],
             Project::Client[$user],
             User[$user],
             File["${title}_ssh_key"]
         ],
-        port            => 80,
-        docroot         => "${repo_path}/$web_path",
-        docroot_owner   => $owner,
-        docroot_group   => $group,
-        logroot         => $log_path,
-        custom_fragment => $custom_fragment,
-        override        => ['All']
+        port              => 80,
+        docroot           => "${repo_path}/$web_path",
+        docroot_owner     => $owner,
+        docroot_group     => $group,
+        logroot           => $log_path,
+        passenger_app_env => $environment,
+        custom_fragment   => $custom_fragment,
+        override          => ['All']
     }
 }

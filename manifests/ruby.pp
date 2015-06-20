@@ -43,10 +43,7 @@ define project::ruby (
         ssh_config => $ssh_config,
         ssh_known_hosts => $ssh_known_hosts,
 
-        custom_fragment => "
-    RackEnv ${environment}\n
-    \n\n
-    ${custom_fragment}"
+        custom_fragment => $custom_fragment
     }
 
     if ($bundle_install == true) {

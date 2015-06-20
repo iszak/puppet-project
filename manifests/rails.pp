@@ -24,7 +24,7 @@ define project::rails (
     $bundle_path    = '',
     $bundle_timeout = 600,
 
-    $migrate = true,
+    $migrate = false,
 
     $capistrano = false,
 
@@ -61,13 +61,7 @@ define project::rails (
 
         skeleton          => $skeleton,
 
-        passenger_app_env => $environment,
-        custom_fragment   => "
-    PassengerStartTimeout 300\n
-    \n\n
-    RackEnv ${environment}\n
-    ${custom_fragment}
-        "
+        custom_fragment   => $custom_fragment
     }
 
     if ($bundle_install == true) {
@@ -81,13 +75,13 @@ define project::rails (
             $bundle_require = [
                 Class[ruby::dev],
                 Project::Base[$title],
+                Class[postgresql::lib::devel],
+                Package['postgresql-server-dev-9.3'],
             ]
         } else {
             $bundle_require = [
                 Class[ruby::dev],
                 Project::Base[$title],
-                Class[postgresql::lib::devel],
-                Package['postgresql-dev-9.3'],
             ]
         }
     } else {
