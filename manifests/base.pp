@@ -112,6 +112,10 @@ define project::base (
         identity => $ssh_key_path
     }
 
+    # TODO: Remove hack
+    exec { "/bin/chown -R ${owner}:${group} ${repo_path}/":
+        require => Vcsrepo[$title],
+    }
 
     apache::vhost { $web_host:
         require           => [

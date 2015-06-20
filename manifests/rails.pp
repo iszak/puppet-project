@@ -24,7 +24,7 @@ define project::rails (
     $bundle_path    = '',
     $bundle_timeout = 600,
 
-    $migrate = false,
+    $migrate = true,
 
     $capistrano = false,
 
