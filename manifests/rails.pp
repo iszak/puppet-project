@@ -105,7 +105,8 @@ define project::rails (
             cwd     => "${project_path}/${bundle_path}",
             user    => $user,
             group   => $group,
-            timeout => $bundle_timeout
+            timeout => $bundle_timeout,
+            unless  => "/usr/bin/test -d ${project_path}"
         }
     }
 
