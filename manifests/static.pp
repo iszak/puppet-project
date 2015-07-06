@@ -9,7 +9,7 @@ define project::static (
     $web_path = '',
     $web_host,
 
-    $ssh_key,
+    $ssh_key = undef,
     $ssh_key_path = undef,
 
     $ssh_config = undef,
@@ -19,27 +19,27 @@ define project::static (
     $npm_path    = '',
     $npm_timeout = 300
 ) {
-    include nodejs
+    include ::profile::node
 
     $home_path    = "/home/${user}"
     $project_path = "${home_path}/${repo_path}"
 
     project::base { $title:
-        user         => $user,
-        owner        => $owner,
-        group        => $group,
+        user            => $user,
+        owner           => $owner,
+        group           => $group,
 
-        repo_path    => $project_path,
-        repo_source  => $repo_source,
+        repo_path       => $project_path,
+        repo_source     => $repo_source,
 
-        web_path     => $web_path,
-        web_host     => $web_host,
+        web_path        => $web_path,
+        web_host        => $web_host,
 
-        ssh_key      => $ssh_key,
-        ssh_key_path => $ssh_key_path,
+        ssh_key         => $ssh_key,
+        ssh_key_path    => $ssh_key_path,
 
         ssh_known_hosts => $ssh_known_hosts,
-        ssh_config => $ssh_config,
+        ssh_config      => $ssh_config,
     }
 
 
