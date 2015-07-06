@@ -23,7 +23,7 @@ define project::node (
 
     $custom_fragment = ''
 ) {
-    include nodejs
+    include ::profile::node
 
     $home_path    = "/home/${user}"
     $project_path = "${home_path}/${repo_path}"
