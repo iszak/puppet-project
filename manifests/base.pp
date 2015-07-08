@@ -36,12 +36,14 @@ define project::base (
 
     if (defined(Project::Client[$user]) == false) {
         project::client { $user:
-            user        => $user,
-            owner       => $owner,
-            group       => $group,
+            user           => $user,
+            owner          => $owner,
+            group          => $group,
 
-            home_path   => $home_path,
-            ssh_path    => $ssh_path
+            home_path       => $home_path,
+            ssh_path        => $ssh_path,
+            ssh_config      => $ssh_config,
+            ssh_known_hosts => $ssh_known_hosts,
         }
     }
 
@@ -60,34 +62,9 @@ define project::base (
         }
     )
 
-
-    if ($ssh_config != undef) {
-        file { "${user}_config":
-            ensure  => present,
-            require => File[$ssh_path],
-            path    => "${ssh_path}/config",
-            owner   => $owner,
-            group   => $group,
-            mode    => '0600',
-            content => $ssh_config
-        }
-    }
-
-    if ($ssh_known_hosts != []) {
-        file { "${user}_known_hosts":
-            ensure  => present,
-            require => File[$ssh_path],
-            path    => "${ssh_path}/known_hosts",
-            owner   => $owner,
-            group   => $group,
-            mode    => '0600',
-            content => join($ssh_known_hosts, "\n")
-        }
-    }
-
     file { "${title}_ssh_key":
        ensure  => present,
-       require => File[$ssh_path],
+       require => Project::Client[$user],
        path    => $real_ssh_key_path,
        owner   => $owner,
        group   => $group,
@@ -97,12 +74,7 @@ define project::base (
 
     vcsrepo { $title:
         ensure  => $repo_ensure,
-        require => [
-            Project::Client[$user],
-            File["${title}_ssh_key"],
-            File["${user}_config"],
-            File["${user}_known_hosts"],
-        ],
+        require => File["${title}_ssh_key"],
         provider => 'git',
         source   => $repo_source,
         path     => $repo_path,
@@ -120,10 +92,7 @@ define project::base (
 
     apache::vhost { $web_host:
         require           => [
-            Vcsrepo[$title],
-            Project::Client[$user],
-            User[$user],
-            File["${title}_ssh_key"]
+            Vcsrepo[$title]
         ],
         port              => 80,
         docroot           => "${repo_path}/$web_path",
