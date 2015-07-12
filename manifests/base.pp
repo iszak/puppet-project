@@ -10,13 +10,13 @@ define project::base (
     $web_path = '',
     $web_host,
 
-    $ssh_key,
+    $ssh_key      = undef,
     $ssh_key_path = undef,
 
-    $ssh_known_hosts = [],
+    $ssh_known_hosts = undef,
     $ssh_config      = undef,
 
-    $skeleton = 'default',
+    $skeleton        = 'default',
 
     $custom_fragment = ''
 ) {
@@ -25,14 +25,7 @@ define project::base (
 
     $home_path    = "/home/${user}"
     $log_path     = "${home_path}/logs"
-    $ssh_path     = "${home_path}/.ssh"
     $project_path = "${home_path}/${repo_path}"
-
-    if ($ssh_key_path == undef) {
-        $real_ssh_key_path = "/home/${user}/.ssh/${title}.key"
-    } else {
-        $real_ssh_key_path = $ssh_key_path
-    }
 
     if (defined(Project::Client[$user]) == false) {
         project::client { $user:
@@ -41,7 +34,7 @@ define project::base (
             group          => $group,
 
             home_path       => $home_path,
-            ssh_path        => $ssh_path,
+
             ssh_config      => $ssh_config,
             ssh_known_hosts => $ssh_known_hosts,
         }
@@ -62,19 +55,21 @@ define project::base (
         }
     )
 
-    file { "${title}_ssh_key":
-       ensure  => present,
-       require => Project::Client[$user],
-       path    => $real_ssh_key_path,
-       owner   => $owner,
-       group   => $group,
-       mode    => '0600',
-       content => $ssh_key
+    if ($ssh_key != undef and $ssh_key_path != undef) {
+      file { "${title}_ssh_key":
+         ensure  => present,
+         require => Project::Client[$user],
+         before  => Vcsrepo[$title],
+         path    => $ssh_key_path,
+         owner   => $owner,
+         group   => $group,
+         mode    => '0600',
+         content => $ssh_key
+      }
     }
 
     vcsrepo { $title:
-        ensure  => $repo_ensure,
-        require => File["${title}_ssh_key"],
+        ensure   => $repo_ensure,
         provider => 'git',
         source   => $repo_source,
         path     => $repo_path,

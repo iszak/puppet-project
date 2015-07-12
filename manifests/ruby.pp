@@ -9,17 +9,17 @@ define project::ruby (
     $web_path = '',
     $web_host,
 
-    $ssh_key,
-    $ssh_key_path = undef,
+    $ssh_key         = undef,
+    $ssh_key_path    = undef,
 
-    $ssh_config = undef,
-    $ssh_known_hosts = [],
+    $ssh_config      = undef,
+    $ssh_known_hosts = undef,
 
-    $bundle_install = true,
-    $bundle_path    = '',
-    $bundle_timeout = 300,
+    $bundle_install  = true,
+    $bundle_path     = '',
+    $bundle_timeout  = 300,
 
-    $environment = 'production',
+    $environment     = 'production',
 
     $custom_fragment = ''
 ) {
@@ -40,7 +40,7 @@ define project::ruby (
         ssh_key         => $ssh_key,
         ssh_key_path    => $ssh_key_path,
 
-        ssh_config => $ssh_config,
+        ssh_config      => $ssh_config,
         ssh_known_hosts => $ssh_known_hosts,
 
         custom_fragment => $custom_fragment
@@ -57,7 +57,8 @@ define project::ruby (
             cwd     => "${project_path}/${bundle_path}",
             user    => $user,
             group   => $group,
-            timeout => $bundle_timeout
+            timeout => $bundle_timeout,
+            onlyif  => "/usr/bin/test $(find ${project_path}/${bundle_path}/Gemfile.lock -mtime -7 -print)"
         }
     }
 }

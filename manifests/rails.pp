@@ -9,26 +9,26 @@ define project::rails (
     $web_path = '',
     $web_host,
 
-    $database_type = 'postgresql',
+    $database_type,
     $database_name,
     $database_username,
     $database_password,
 
-    $ssh_key,
-    $ssh_key_path = undef,
+    $ssh_key         = undef,
+    $ssh_key_path    = undef,
 
-    $ssh_config = undef,
-    $ssh_known_hosts = [],
+    $ssh_config      = undef,
+    $ssh_known_hosts = undef,
 
-    $bundle_install = true,
-    $bundle_path    = '',
-    $bundle_timeout = 600,
+    $bundle_install  = true,
+    $bundle_path     = '',
+    $bundle_timeout  = 600,
 
-    $migrate = true,
+    $migrate         = true,
 
-    $capistrano = false,
+    $capistrano      = false,
 
-    $environment = 'production',
+    $environment     = 'production',
 
     $custom_fragment = ''
 ) {
@@ -106,7 +106,7 @@ define project::rails (
             user    => $user,
             group   => $group,
             timeout => $bundle_timeout,
-            unless  => "/usr/bin/test -d ${project_path}"
+            unless  => "/usr/bin/test $(find ${project_path}/${bundle_path}/Gemfile.lock -mtime -1 -print)"
         }
     }
 
@@ -118,7 +118,6 @@ define project::rails (
     }
 
     if ($migrate == true) {
-        # TODO: Conditional migrate
         ruby::rake { $title:
             require   => $rake_require,
             task      => 'db:migrate',
@@ -126,7 +125,8 @@ define project::rails (
             bundle    => $bundle_install,
             user      => $user,
             group     => $group,
-            cwd       => $project_path
+            cwd       => $project_path,
+            onlyif    => "/usr/bin/test $(find ${project_path}/db/migrate -mtime -7 -print -quit)"
         }
     }
 }

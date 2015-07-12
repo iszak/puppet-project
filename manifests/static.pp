@@ -6,18 +6,20 @@ define project::static (
     $repo_path,
     $repo_source,
 
-    $web_path = '',
+    $web_path        = '',
     $web_host,
 
-    $ssh_key = undef,
-    $ssh_key_path = undef,
+    $ssh_key         = undef,
+    $ssh_key_path    = undef,
 
-    $ssh_config = undef,
-    $ssh_known_hosts = [],
+    $ssh_config      = undef,
+    $ssh_known_hosts = undef,
 
-    $npm_install = false,
-    $npm_path    = '',
-    $npm_timeout = 300
+    $npm_install     = false,
+    $npm_path        = '',
+    $npm_timeout     = 300,
+
+    $environment     = 'production',
 ) {
     include ::profile::node
 

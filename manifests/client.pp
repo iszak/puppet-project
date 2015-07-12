@@ -5,10 +5,11 @@ define project::client (
 
     $home_path,
 
-        $ssh_path,
-    $ssh_known_hosts = [],
+    $ssh_known_hosts = undef,
     $ssh_config      = undef,
 ) {
+    $ssh_path = "${home_path}/.ssh/"
+
     user { $user:
         ensure     => present,
         managehome => true
@@ -43,7 +44,7 @@ define project::client (
         }
     }
 
-    if ($ssh_known_hosts != []) {
+    if ($ssh_known_hosts != undef) {
         file { "${user}_known_hosts":
             ensure  => present,
             require => File[$ssh_path],

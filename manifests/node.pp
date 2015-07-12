@@ -6,20 +6,20 @@ define project::node (
     $repo_path,
     $repo_source,
 
-    $web_path = '',
+    $web_path        = '',
     $web_host,
 
     $ssh_key,
-    $ssh_key_path = undef,
+    $ssh_key_path    = undef,
 
-    $ssh_config = undef,
+    $ssh_config      = undef,
     $ssh_known_hosts = [],
 
-    $npm_install = true,
-    $npm_path    = '',
-    $npm_timeout = 300,
+    $npm_install     = true,
+    $npm_path        = '',
+    $npm_timeout     = 300,
 
-    $environment = 'production',
+    $environment     = 'production',
 
     $custom_fragment = ''
 ) {
@@ -64,7 +64,8 @@ define project::node (
             group       => $group,
             cwd         => "${project_path}/${npm_path}",
             creates     => "${project_path}/node_modules",
-            timeout     => $npm_timeout
+            timeout     => $npm_timeout,
+            onlyif      => "/usr/bin/test $(find ${project_path}/package.json -mtime -7 -print)",
         }
     }
 }

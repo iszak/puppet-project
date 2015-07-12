@@ -9,24 +9,26 @@ define project::zf2 (
     $web_path = '',
     $web_host,
 
-    $database_type = 'postgresql',
+    $database_type,
     $database_name,
     $database_username,
     $database_password,
 
-    $ssh_key,
-    $ssh_key_path = undef,
+    $ssh_key         = undef,
+    $ssh_key_path    = undef,
 
-    $ssh_config = undef,
-    $ssh_known_hosts = [],
+    $ssh_config      = undef,
+    $ssh_known_hosts = undef,
 
     $composer_install = true,
     $composer_path    = '',
     $composer_timeout = 300,
 
-    $environment = 'production',
+    $doctrine_migrate = true,
 
-    $custom_fragment = ''
+    $environment      = 'production',
+
+    $custom_fragment  = ''
 ) {
     $home_path    = "/home/${user}"
     $project_path = "${home_path}/${repo_path}"
@@ -45,7 +47,7 @@ define project::zf2 (
         ssh_key         => $ssh_key,
         ssh_key_path    => $ssh_key_path,
 
-        ssh_config => $ssh_config,
+        ssh_config      => $ssh_config,
         ssh_known_hosts => $ssh_known_hosts,
 
         custom_fragment => $custom_fragment
@@ -70,7 +72,8 @@ define project::zf2 (
             group       => $group,
             cwd         => "${project_path}/${composer_path}",
             creates     => "${project_path}/vendor",
-            timeout     => $composer_timeout
+            timeout     => $composer_timeout,
+            onlyif      => "/usr/bin/test $(find ${project_path}/${composer_path}/composer.lock -mtime -7 -print)"
         }
     }
 
@@ -82,31 +85,34 @@ define project::zf2 (
         environment => "HOME=${home_path}",
         user        => $user,
         group       => $group,
-        cwd         => "${project_path}/"
+        cwd         => "${project_path}/",
+        onlyif      => "/usr/bin/test $(find ${project_path}/web/config/autoload/ -mtime -7 -print)"
     }
-
 
     exec { "${title}_data":
         require => [
             Vcsrepo[crowdwish_backend],
         ],
         command => "/bin/chmod -R 0777 data/",
-        cwd     => "${project_path}/web/"
+        cwd     => "${project_path}/web/",
+        onlyif  => "/usr/bin/test $(find ${project_path}/web/data/ -type d -not -perm 0777 -print -quit)"
     }
 
 
-    # TODO: Conditional
-    exec { "${title}_doctrine_migration":
-        require     => [
-            Vcsrepo[crowdwish_backend],
-            Exec["${title}_composer_install"],
-            Exec["${title}_data"],
-            Exec["${title}_config"]
-        ],
-        command     => "/usr/bin/php web/vendor/bin/doctrine-module migrations:migrate --no-interaction",
-        environment => "HOME=${home_path}",
-        user        => $user,
-        group       => $group,
-        cwd         => "${project_path}/"
+    if ($doctrine_migrate) {
+        exec { "${title}_doctrine_migration":
+            require     => [
+                Vcsrepo[crowdwish_backend],
+                Exec["${title}_composer_install"],
+                Exec["${title}_data"],
+                Exec["${title}_config"]
+            ],
+            command     => "/usr/bin/php web/vendor/bin/doctrine-module migrations:migrate --no-interaction",
+            environment => "HOME=${home_path}",
+            user        => $user,
+            group       => $group,
+            cwd         => "${project_path}/",
+            onlyif      => "/usr/bin/test $(find ${project_path}/web/migrations/ -mtime -7 -print)"
+        }
     }
 }
