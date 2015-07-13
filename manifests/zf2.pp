@@ -24,14 +24,27 @@ define project::zf2 (
     $composer_path    = '',
     $composer_timeout = 300,
 
-    $doctrine_migrate = true,
+    $migrate          = true,
 
     $environment      = 'production',
 
     $custom_fragment  = ''
 ) {
+    include ::profile::php
+
     $home_path    = "/home/${user}"
     $project_path = "${home_path}/${repo_path}"
+
+    validate_bool($composer_install)
+    validate_string($composer_path)
+    validate_integer($composer_timeout)
+
+    validate_re($database_type, '^(postgresql|mysql)$')
+    validate_string($database_name)
+    validate_string($database_username)
+    validate_string($database_password)
+
+    validate_bool($migrate)
 
     project::base { $title:
         user            => $user,
@@ -99,7 +112,7 @@ define project::zf2 (
     }
 
 
-    if ($doctrine_migrate) {
+    if ($migrate) {
         exec { "${title}_doctrine_migration":
             require     => [
                 Vcsrepo[crowdwish_backend],

@@ -8,6 +8,21 @@ define project::client (
     $ssh_known_hosts = undef,
     $ssh_config      = undef,
 ) {
+    validate_string($user)
+    validate_string($owner)
+    validate_string($group)
+
+    validate_absolute_path($home_path)
+
+    if ($ssh_known_hosts != undef) {
+      validate_array($ssh_known_hosts)
+    }
+
+    if ($ssh_config != undef) {
+      validate_string($ssh_config)
+    }
+
+
     $ssh_path = "${home_path}/.ssh/"
 
     user { $user:

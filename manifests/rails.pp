@@ -25,13 +25,26 @@ define project::rails (
     $bundle_timeout  = 600,
 
     $migrate         = true,
-
     $capistrano      = false,
 
     $environment     = 'production',
 
     $custom_fragment = ''
 ) {
+    include ::profile::ruby
+
+    validate_bool($bundle_install)
+    validate_string($bundle_path)
+    validate_integer($bundle_timeout)
+
+    validate_re($database_type, '^(postgresql|mysql)$')
+    validate_string($database_name)
+    validate_string($database_username)
+    validate_string($database_password)
+
+    validate_bool($migrate)
+    validate_bool($capistrano)
+
     $home_path    = "/home/${user}"
 
     if ($capistrano == true) {

@@ -23,6 +23,12 @@ define project::ruby (
 
     $custom_fragment = ''
 ) {
+    include ::profile::ruby
+
+    validate_bool($bundle_install)
+    validate_string($bundle_path)
+    validate_integer($bundle_timeout)
+
     $home_path    = "/home/${user}"
     $project_path = "${home_path}/${repo_path}"
 

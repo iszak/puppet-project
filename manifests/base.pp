@@ -20,8 +20,27 @@ define project::base (
 
     $custom_fragment = ''
 ) {
-    include git
-    include apache
+    include ::git
+    include ::apache
+
+    validate_re($repo_ensure, '^(present|absent)$')
+    validate_absolute_path($repo_path)
+    validate_string($repo_source)
+
+    validate_string($web_path)
+    validate_string($web_host)
+
+    if ($ssh_key != undef) {
+      validate_string($ssh_key)
+    }
+
+    if ($ssh_key_path != undef) {
+      validate_absolute_path($ssh_key_path)
+    }
+
+    validate_re($skeleton, '^(default|capistrano)$')
+
+    validate_string($custom_fragment)
 
     $home_path    = "/home/${user}"
     $log_path     = "${home_path}/logs"

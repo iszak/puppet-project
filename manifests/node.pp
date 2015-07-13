@@ -25,6 +25,10 @@ define project::node (
 ) {
     include ::profile::node
 
+    validate_bool($npm_install)
+    validate_string($npm_path)
+    validate_integer($npm_timeout)
+
     $home_path    = "/home/${user}"
     $project_path = "${home_path}/${repo_path}"
 
