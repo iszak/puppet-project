@@ -6,20 +6,22 @@ define project::static (
     $repo_path,
     $repo_source,
 
-    $web_path        = '',
     $web_host,
+    $web_path             = '',
 
-    $ssh_key         = undef,
-    $ssh_key_path    = undef,
+    $ssh_private_keys     = {},
+    $ssh_private_key_path = '',
 
-    $ssh_config      = undef,
-    $ssh_known_hosts = undef,
+    $ssh_config           = '',
+    $ssh_known_hosts      = {},
 
-    $npm_install     = false,
-    $npm_path        = '',
-    $npm_timeout     = 300,
+    $ssh_authorized_keys  = {},
 
-    $environment     = 'production',
+    $npm_install          = false,
+    $npm_path             = '',
+    $npm_timeout          = 300,
+
+    $environment          = 'production',
 ) {
     include ::profile::node
 
@@ -31,21 +33,23 @@ define project::static (
     $project_path = "${home_path}/${repo_path}"
 
     project::base { $title:
-        user            => $user,
-        owner           => $owner,
-        group           => $group,
+        user                 => $user,
+        owner                => $owner,
+        group                => $group,
 
-        repo_path       => $project_path,
-        repo_source     => $repo_source,
+        repo_path            => $project_path,
+        repo_source          => $repo_source,
 
-        web_path        => $web_path,
-        web_host        => $web_host,
+        web_path             => $web_path,
+        web_host             => $web_host,
 
-        ssh_key         => $ssh_key,
-        ssh_key_path    => $ssh_key_path,
+        ssh_private_keys     => $ssh_private_keys,
+        ssh_private_key_path => $ssh_private_key_path,
 
-        ssh_known_hosts => $ssh_known_hosts,
-        ssh_config      => $ssh_config,
+        ssh_config           => $ssh_config,
+        ssh_known_hosts      => $ssh_known_hosts,
+
+        ssh_authorized_keys  => $ssh_authorized_keys,
     }
 
 

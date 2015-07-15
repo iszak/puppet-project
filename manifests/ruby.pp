@@ -6,22 +6,24 @@ define project::ruby (
     $repo_path,
     $repo_source,
 
-    $web_path = '',
     $web_host,
+    $web_path             = '',
 
-    $ssh_key         = undef,
-    $ssh_key_path    = undef,
+    $ssh_private_keys     = {},
+    $ssh_private_key_path = '',
 
-    $ssh_config      = undef,
-    $ssh_known_hosts = undef,
+    $ssh_config           = '',
+    $ssh_known_hosts      = {},
 
-    $bundle_install  = true,
-    $bundle_path     = '',
-    $bundle_timeout  = 300,
+    $ssh_authorized_keys  = {},
 
-    $environment     = 'production',
+    $bundle_install       = true,
+    $bundle_path          = '',
+    $bundle_timeout       = 300,
 
-    $custom_fragment = ''
+    $environment          = 'production',
+
+    $custom_fragment      = ''
 ) {
     include ::profile::ruby
 
@@ -33,23 +35,25 @@ define project::ruby (
     $project_path = "${home_path}/${repo_path}"
 
     project::base { $title:
-        user            => $user,
-        owner           => $owner,
-        group           => $group,
+        user                 => $user,
+        owner                => $owner,
+        group                => $group,
 
-        repo_path       => $project_path,
-        repo_source     => $repo_source,
+        repo_path            => $project_path,
+        repo_source          => $repo_source,
 
-        web_path        => $web_path,
-        web_host        => $web_host,
+        web_path             => $web_path,
+        web_host             => $web_host,
 
-        ssh_key         => $ssh_key,
-        ssh_key_path    => $ssh_key_path,
+        ssh_private_keys     => $ssh_private_keys,
+        ssh_private_key_path => $ssh_private_key_path,
 
-        ssh_config      => $ssh_config,
-        ssh_known_hosts => $ssh_known_hosts,
+        ssh_config           => $ssh_config,
+        ssh_known_hosts      => $ssh_known_hosts,
 
-        custom_fragment => $custom_fragment
+        ssh_authorized_keys  => $ssh_authorized_keys,
+
+        custom_fragment      => $custom_fragment
     }
 
     if ($bundle_install == true) {

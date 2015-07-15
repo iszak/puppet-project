@@ -5,8 +5,12 @@ define project::client (
 
     $home_path,
 
-    $ssh_known_hosts = undef,
-    $ssh_config      = undef,
+    $ssh_private_keys     = {},
+
+    $ssh_config           = '',
+    $ssh_known_hosts      = {},
+
+    $ssh_authorized_keys  = {},
 ) {
     validate_string($user)
     validate_string($owner)
@@ -14,13 +18,11 @@ define project::client (
 
     validate_absolute_path($home_path)
 
-    if ($ssh_known_hosts != undef) {
-      validate_array($ssh_known_hosts)
-    }
+    validate_hash($ssh_private_keys)
+    validate_hash($ssh_known_hosts)
+    validate_hash($ssh_authorized_keys)
 
-    if ($ssh_config != undef) {
-      validate_string($ssh_config)
-    }
+    validate_string($ssh_config)
 
 
     $ssh_path = "${home_path}/.ssh/"
@@ -47,7 +49,7 @@ define project::client (
     }
 
 
-    if ($ssh_config != undef) {
+    if ($ssh_config != '') {
         file { "${user}_ssh_config":
             ensure  => present,
             require => File[$ssh_path],
@@ -59,15 +61,29 @@ define project::client (
         }
     }
 
-    if ($ssh_known_hosts != undef) {
-        file { "${user}_known_hosts":
-            ensure  => present,
-            require => File[$ssh_path],
-            path    => "${ssh_path}/known_hosts",
-            owner   => $owner,
-            group   => $group,
-            mode    => '0600',
-            content => join($ssh_known_hosts, "\n")
-        }
-    }
+    create_resources(
+      'file',
+      $ssh_private_keys,
+      {
+        owner => $owner,
+        group => $group,
+        mode  => 0600
+      }
+    )
+
+    create_resources(
+      'ssh_authorized_key',
+      $ssh_authorized_keys,
+      {
+        user => $user
+      }
+    )
+
+    create_resources(
+      'sshkey',
+      $ssh_known_hosts,
+      {
+        target => "${ssh_path}/known_hosts"
+      }
+    )
 }

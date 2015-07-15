@@ -6,30 +6,32 @@ define project::rails (
     $repo_path,
     $repo_source,
 
-    $web_path = '',
-    $web_host,
-
     $database_type,
     $database_name,
     $database_username,
     $database_password,
 
-    $ssh_key         = undef,
-    $ssh_key_path    = undef,
+    $web_host,
+    $web_path             = '',
 
-    $ssh_config      = undef,
-    $ssh_known_hosts = undef,
+    $ssh_private_keys     = {},
+    $ssh_private_key_path = '',
 
-    $bundle_install  = true,
-    $bundle_path     = '',
-    $bundle_timeout  = 600,
+    $ssh_config           = '',
+    $ssh_known_hosts      = {},
 
-    $migrate         = true,
-    $capistrano      = false,
+    $ssh_authorized_keys  = {},
 
-    $environment     = 'production',
+    $bundle_install       = true,
+    $bundle_path          = '',
+    $bundle_timeout       = 600,
 
-    $custom_fragment = ''
+    $migrate              = true,
+    $capistrano           = false,
+
+    $environment          = 'production',
+
+    $custom_fragment      = ''
 ) {
     include ::profile::ruby
 
@@ -56,25 +58,27 @@ define project::rails (
     }
 
     project::base { $title:
-        user              => $user,
-        owner             => $owner,
-        group             => $group,
+        user                 => $user,
+        owner                => $owner,
+        group                => $group,
 
-        repo_path         => $project_path,
-        repo_source       => $repo_source,
+        repo_path            => $project_path,
+        repo_source          => $repo_source,
 
-        web_path          => $web_path,
-        web_host          => $web_host,
+        web_path             => $web_path,
+        web_host             => $web_host,
 
-        ssh_key           => $ssh_key,
-        ssh_key_path      => $ssh_key_path,
+        ssh_private_keys     => $ssh_private_keys,
+        ssh_private_key_path => $ssh_private_key_path,
 
-        ssh_config        => $ssh_config,
-        ssh_known_hosts   => $ssh_known_hosts,
+        ssh_config           => $ssh_config,
+        ssh_known_hosts      => $ssh_known_hosts,
 
-        skeleton          => $skeleton,
+        ssh_authorized_keys  => $ssh_authorized_keys,
 
-        custom_fragment   => $custom_fragment
+        skeleton             => $skeleton,
+
+        custom_fragment      => $custom_fragment
     }
 
     if ($bundle_install == true) {

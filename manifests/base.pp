@@ -7,18 +7,20 @@ define project::base (
     $repo_path,
     $repo_source,
 
-    $web_path = '',
     $web_host,
+    $web_path             = '',
 
-    $ssh_key      = undef,
-    $ssh_key_path = undef,
+    $ssh_private_keys     = {},
+    $ssh_private_key_path = '',
 
-    $ssh_known_hosts = undef,
-    $ssh_config      = undef,
+    $ssh_config           = '',
+    $ssh_known_hosts      = {},
 
-    $skeleton        = 'default',
+    $ssh_authorized_keys  = {},
 
-    $custom_fragment = ''
+    $skeleton             = 'default',
+
+    $custom_fragment      = ''
 ) {
     include ::git
     include ::apache
@@ -30,14 +32,6 @@ define project::base (
     validate_string($web_path)
     validate_string($web_host)
 
-    if ($ssh_key != undef) {
-      validate_string($ssh_key)
-    }
-
-    if ($ssh_key_path != undef) {
-      validate_absolute_path($ssh_key_path)
-    }
-
     validate_re($skeleton, '^(default|capistrano)$')
 
     validate_string($custom_fragment)
@@ -48,14 +42,18 @@ define project::base (
 
     if (defined(Project::Client[$user]) == false) {
         project::client { $user:
-            user           => $user,
-            owner          => $owner,
-            group          => $group,
+            user                => $user,
+            owner               => $owner,
+            group               => $group,
 
-            home_path       => $home_path,
+            home_path           => $home_path,
 
-            ssh_config      => $ssh_config,
-            ssh_known_hosts => $ssh_known_hosts,
+            ssh_private_keys    => $ssh_private_keys,
+
+            ssh_config          => $ssh_config,
+            ssh_known_hosts     => $ssh_known_hosts,
+
+            ssh_authorized_keys => $ssh_authorized_keys,
         }
     }
 
@@ -74,19 +72,6 @@ define project::base (
         }
     )
 
-    if ($ssh_key != undef and $ssh_key_path != undef) {
-      file { "${title}_ssh_key":
-         ensure  => present,
-         require => Project::Client[$user],
-         before  => Vcsrepo[$title],
-         path    => $ssh_key_path,
-         owner   => $owner,
-         group   => $group,
-         mode    => '0600',
-         content => $ssh_key
-      }
-    }
-
     vcsrepo { $title:
         ensure   => $repo_ensure,
         provider => 'git',
@@ -95,7 +80,7 @@ define project::base (
         user     => $user,
         owner    => $owner,
         group    => $group,
-        identity => $ssh_key_path
+        identity => $ssh_private_key_path
     }
 
     # TODO: Remove hack
