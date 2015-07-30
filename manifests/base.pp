@@ -86,7 +86,7 @@ define project::base (
     # TODO: Remove hack
     exec { "/bin/chown -R ${owner}:${group} ${repo_path}/":
         require => Vcsrepo[$title],
-        unless  => "/usr/bin/stat -c '%U' ${repo_path}/ | /bin/grep ${owner}",
+        onlyif  => "/usr/bin/find -L ${repo_path}/ -not -user ${owner} -print -quit | grep '.'",
     }
 
     apache::vhost { $web_host:
