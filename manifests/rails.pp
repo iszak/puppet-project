@@ -31,7 +31,9 @@ define project::rails (
 
     $environment          = 'production',
 
-    $custom_fragment      = ''
+    $custom_fragment      = '',
+
+    $secrets              = {}
 ) {
     include ::profile::ruby
 
@@ -51,7 +53,7 @@ define project::rails (
 
     if ($capistrano == true) {
         $skeleton     = "capistrano"
-        $project_path = "${home_path}/current"
+        $project_path = "${home_path}/${repo_path}/current"
     } else {
         $skeleton     = "default"
         $project_path = "${home_path}/${repo_path}"
@@ -79,6 +81,17 @@ define project::rails (
         skeleton             => $skeleton,
 
         custom_fragment      => $custom_fragment
+    }
+
+    if ($secrets != {}) {
+        file { "${title}_secrets":
+            ensure  => present,
+            path    => "${project_path}/config/secrets.yml",
+            require => Project::Base[$title],
+            owner   => $owner,
+            group   => $group,
+            content => template('project/rails/secrets.yml.erb'),
+        }
     }
 
     if ($bundle_install == true) {
