@@ -3,19 +3,26 @@ define project::skeleton::capistrano (
     $owner,
     $group,
     $project,
+    $project_path,
 ) {
     validate_string($user)
     validate_string($owner)
     validate_string($group)
     validate_string($project)
 
-    $home_path    = "/home/${user}"
+    $real_project_path = regsubst($project_path, '/current', '')
+
+    file { "${real_project_path}":
+        ensure => directory,
+        owner  => $owner,
+        group  => $group
+    }
 
     $timestamp    = regsubst(generate('/bin/date', '+%s'), '\n', '')
-    $current_path = "${home_path}/current"
-    $release_path = "${home_path}/releases"
-    $repo_path    = "${home_path}/repo"
-    $shared_path  = "${home_path}/shared"
+    $current_path = "${real_project_path}/current"
+    $release_path = "${real_project_path}/releases"
+    $repo_path    = "${real_project_path}/repo"
+    $shared_path  = "${real_project_path}/shared"
 
     $current_release_path = "${release_path}/${timestamp}"
 

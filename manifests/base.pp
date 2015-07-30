@@ -38,7 +38,6 @@ define project::base (
 
     $home_path    = "/home/${user}"
     $log_path     = "${home_path}/logs"
-    $project_path = "${home_path}/${repo_path}"
 
     if (defined(Project::Client[$user]) == false) {
         project::client { $user:
@@ -61,13 +60,14 @@ define project::base (
         "project::skeleton::${skeleton}",
         {
             "${title}" => {
-                require => [
+                require      => [
                     Project::Client[$user],
                 ],
-                user    => $user,
-                owner   => $owner,
-                group   => $group,
-                project => $title,
+                user         => $user,
+                owner        => $owner,
+                group        => $group,
+                project      => $title,
+                project_path => $repo_path,
             }
         }
     )
