@@ -56,7 +56,7 @@ define project::rails (
         $project_path = "${home_path}/${repo_path}/current"
     } else {
         $skeleton     = "default"
-        $project_path = "${home_path}/${repo_path}"
+        $project_path = regsubst("${home_path}/${repo_path}", '/$', '')
     }
 
     project::base { $title:

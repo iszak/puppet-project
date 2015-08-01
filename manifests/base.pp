@@ -94,7 +94,7 @@ define project::base (
             Vcsrepo[$title]
         ],
         port              => 80,
-        docroot           => "${repo_path}/$web_path",
+        docroot           => "${repo_path}/${web_path}",
         docroot_owner     => $owner,
         docroot_group     => $group,
         logroot           => $log_path,
