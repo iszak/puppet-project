@@ -18,7 +18,6 @@ define project::client (
 
     validate_absolute_path($home_path)
 
-    validate_hash($ssh_private_keys)
     validate_hash($ssh_known_hosts)
     validate_hash($ssh_authorized_keys)
 
@@ -60,16 +59,6 @@ define project::client (
             content => $ssh_config
         }
     }
-
-    create_resources(
-      'file',
-      $ssh_private_keys,
-      {
-        owner => $owner,
-        group => $group,
-        mode  => 0600
-      }
-    )
 
     create_resources(
       'ssh_authorized_key',

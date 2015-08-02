@@ -32,6 +32,8 @@ define project::base (
     validate_string($web_path)
     validate_string($web_host)
 
+    validate_hash($ssh_private_keys)
+
     validate_re($skeleton, '^(default|capistrano)$')
 
     validate_string($custom_fragment)
@@ -70,6 +72,19 @@ define project::base (
                 project_path => $repo_path,
             }
         }
+    )
+
+
+
+    create_resources(
+      'file',
+      $ssh_private_keys,
+      {
+        require => Project::Client[$user],
+        owner   => $owner,
+        group   => $group,
+        mode    => 0600
+      }
     )
 
     vcsrepo { $title:
