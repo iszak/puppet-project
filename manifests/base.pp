@@ -49,8 +49,6 @@ define project::base (
 
             home_path           => $home_path,
 
-            ssh_private_keys    => $ssh_private_keys,
-
             ssh_config          => $ssh_config,
             ssh_known_hosts     => $ssh_known_hosts,
 
