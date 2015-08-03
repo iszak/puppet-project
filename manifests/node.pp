@@ -35,23 +35,24 @@ define project::node (
     $project_path = "${home_path}/${repo_path}"
 
     project::base { $title:
-        user                => $user,
-        owner               => $owner,
-        group               => $group,
+        user                 => $user,
+        owner                => $owner,
+        group                => $group,
 
-        repo_path           => $project_path,
-        repo_source         => $repo_source,
+        repo_path            => $project_path,
+        repo_source          => $repo_source,
 
-        web_path            => $web_path,
-        web_host            => $web_host,
+        web_path             => $web_path,
+        web_host             => $web_host,
 
-        ssh_private_keys    => $ssh_private_keys,
+        ssh_private_keys     => $ssh_private_keys,
+        ssh_private_key_path => $ssh_private_key_path,
 
-        ssh_config          => $ssh_config,
-        ssh_known_hosts     => $ssh_known_hosts,
+        ssh_config           => $ssh_config,
+        ssh_known_hosts      => $ssh_known_hosts,
 
-        ssh_authorized_keys => $ssh_authorized_keys,
-        custom_fragment     => $custom_fragment
+        ssh_authorized_keys  => $ssh_authorized_keys,
+        custom_fragment      => $custom_fragment
     }
 
 
