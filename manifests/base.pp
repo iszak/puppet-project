@@ -4,6 +4,7 @@ define project::base (
     $group,
 
     $repo_ensure = 'present',
+    $repo_revision,
     $repo_path,
     $repo_source,
 
@@ -89,6 +90,7 @@ define project::base (
         ensure   => $repo_ensure,
         provider => 'git',
         source   => $repo_source,
+        revision => $repo_revision,
         path     => $repo_path,
         user     => $user,
         owner    => $owner,

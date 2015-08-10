@@ -5,6 +5,7 @@ define project::static (
 
     $repo_path,
     $repo_source,
+    $repo_revision,
 
     $web_host,
     $web_path             = '',
@@ -39,6 +40,7 @@ define project::static (
 
         repo_path            => $project_path,
         repo_source          => $repo_source,
+        repo_revision        => $repo_revision,
 
         web_path             => $web_path,
         web_host             => $web_host,

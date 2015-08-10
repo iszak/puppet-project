@@ -5,6 +5,7 @@ define project::zf2 (
 
     $repo_path,
     $repo_source,
+    $repo_revision,
 
     $database_type,
     $database_name,
@@ -55,6 +56,7 @@ define project::zf2 (
 
         repo_path            => $project_path,
         repo_source          => $repo_source,
+        repo_revision        => $repo_revision,
 
         web_path             => $web_path,
         web_host             => $web_host,
