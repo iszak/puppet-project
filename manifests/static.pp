@@ -38,6 +38,7 @@ define project::static (
     owner                => $owner,
     group                => $group,
 
+    repo_ensure          => 'present',
     repo_path            => $project_path,
     repo_source          => $repo_source,
     repo_revision        => $repo_revision,
