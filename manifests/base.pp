@@ -80,6 +80,7 @@ define project::base (
     $ssh_private_keys,
     {
       require => Project::Client[$user],
+      before  => Vcsrepo[$title],
       owner   => $owner,
       group   => $group,
       mode    => 0600
