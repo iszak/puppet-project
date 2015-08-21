@@ -1,0 +1,5 @@
+.bundle/
+.librarian/
+.tmp/
+vendor/
+.DS_Store
